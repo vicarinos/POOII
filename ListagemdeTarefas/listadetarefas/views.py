@@ -1,13 +1,36 @@
+from datetime import date
+
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView, View
 
 from listadetarefas.models import tarefa
 
 # Create your views here.
 
-def home(request):
-    return render(request, "listadetarefas/home.html")
+class TarefaListView(ListView):
+    model = tarefa
 
-def tarefa_listar(request):
-    tarefas = tarefa.objects.all()
-    return render(request, "listadetarefas/tarefa_listar.html", {"tarefas" : tarefas})
+class TarefaCreateView (CreateView):
+    model = tarefa
+    fields = ["titulo", "prazoLimite", 
+              "terminado_em", "pessoa_responsavel"]
+    success_url = reverse_lazy("tarefa_list")
+
+class TarefaUpdateView (UpdateView):
+    model = tarefa
+    fields = ["titulo", "prazoLimite", 
+                  "pessoa_responsavel"]
+    success_url = reverse_lazy("tarefa_list")
+
+class TarefaDeleteView (DeleteView):
+    model = tarefa
+    success_url = reverse_lazy("tarefa_list")
+
+class TarefaCompleteView(View):
+    def get(self, request, pk):
+        tarefa = get_object_or_404(tarefa, pk=pk)
+        tarefa.terminado_em = date.today()
+        tarefa.save()
+        return redirect("tarefa_list")

@@ -1,0 +1,14 @@
+
+
+<main class="container">
+    <h1>Deletar Tarefa</h1>
+
+    <p>Tem certeza que deseja excluir a tarefa <strong>{{ todo.title }}</strong>?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-danger">Excluir</button>
+        <a href="{% url 'tarefa_list' %}" class="btn btn-primary">Cancelar</a>
+    </form>
+</main>
